@@ -1,0 +1,45 @@
+package com.itheima.controller;
+
+import entity.Result;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * 全局异常处理器
+ * 统一处理Controller层抛出的异常，返回JSON格式响应
+ */
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    /**
+     * 处理空指针异常
+     */
+    @ExceptionHandler(NullPointerException.class)
+    @ResponseBody
+    public Result handleNullPointerException(NullPointerException ex) {
+        ex.printStackTrace();  // 控制台打印异常信息，方便调试
+        return new Result(false, "数据处理异常，请检查输入");
+    }
+
+    /**
+     * 处理请求体格式错误（JSON格式错误）
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseBody
+    public Result handleBadRequest(HttpMessageNotReadableException ex) {
+        ex.printStackTrace();
+        return new Result(false, "请求数据格式错误");
+    }
+
+    /**
+     * 兜底处理：捕获所有其他异常
+     */
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    public Result handleAll(Exception ex) {
+        ex.printStackTrace();  // 打印完整堆栈，便于排查问题
+        return new Result(false, "操作失败，请稍后重试");
+    }
+}
